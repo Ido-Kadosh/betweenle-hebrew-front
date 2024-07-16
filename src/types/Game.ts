@@ -1,1 +1,1 @@
-export type GuessDirection = 'TOP' | 'BOTTOM';
+export type GuessResult = 'TOP' | 'BOTTOM' | 'CORRECT';

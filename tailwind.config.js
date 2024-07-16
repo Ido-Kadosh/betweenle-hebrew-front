@@ -14,6 +14,7 @@ export default {
 					200: '#cccccc',
 				},
 				error: '#4d0b0b',
+				success: '#388e3d',
 			},
 			keyframes: {
 				slideUp: {

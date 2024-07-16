@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { GuessDirection } from '../types/Game';
+import { GuessResult } from '../types/Game';
 
 interface PropTypes {
 	guess: string;
-	slideDirection: GuessDirection | null;
-	onHighlightComplete: (direction: GuessDirection | null) => void;
+	slideDirection: GuessResult | null;
+	onHighlightComplete: (direction: GuessResult | null) => void;
 }
 const CurrentGuess = ({ guess, slideDirection, onHighlightComplete }: PropTypes) => {
 	const [highlightIndex, setHighlightIndex] = useState<number>(-1);
@@ -20,7 +20,7 @@ const CurrentGuess = ({ guess, slideDirection, onHighlightComplete }: PropTypes)
 		}
 
 		// slide start
-		if (highlightIndex === 5 && slideDirection) {
+		if (highlightIndex === 5 && slideDirection && slideDirection !== 'CORRECT') {
 			setTimeout(() => {
 				setSlideIndex(0);
 			}, 250);
@@ -60,9 +60,15 @@ const CurrentGuess = ({ guess, slideDirection, onHighlightComplete }: PropTypes)
 
 	const getBoxClassName = (letter: string, idx: number) => {
 		let className = '';
+
+		// when in slide
 		if (idx < slideIndex && slideDirection === 'TOP') className += 'animate-slideUp ';
 		else if (idx < slideIndex && slideDirection === 'BOTTOM') className += 'animate-slideDown ';
-		if (idx <= highlightIndex) className += 'bg-blue-200';
+
+		// when in highlight (before slide)
+		if (idx <= highlightIndex && slideDirection === 'CORRECT') className += 'bg-success';
+		else if (idx <= highlightIndex) 'bg-blue-200';
+		// when not in slide or highlight
 		else if (letter) className += 'bg-orange';
 		return className;
 	};
