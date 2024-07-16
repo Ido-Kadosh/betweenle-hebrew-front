@@ -1,16 +1,16 @@
 interface PropTypes {
-	word: string;
+	guess: string;
 }
-const PreviousGuess = ({ word }: PropTypes) => {
+const PreviousGuess = ({ guess }: PropTypes) => {
 	const getGuessColor = () => {
-		if (word === 'אאאאא' || word === 'תתתתת') return 'text-slate-300';
+		if (guess === 'אאאאא' || guess === 'תתתתת') return 'text-slate-300';
 		return 'text-white';
 	};
 
 	return (
 		<div>
 			<div className="flex gap-1">
-				{word.split('').map((letter, idx) => (
+				{guess.split('').map((letter, idx) => (
 					<div
 						className={`${getGuessColor()} mb-3 text-4xl font-semibold w-20 grid place-items-center bg-blue-100 aspect-square`}
 						key={idx}
