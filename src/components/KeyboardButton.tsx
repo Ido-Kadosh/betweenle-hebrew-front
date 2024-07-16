@@ -9,7 +9,7 @@ const KeyboardButton = ({ children, onClick }: PropTypes) => {
 	return (
 		<button
 			onClick={onClick}
-			className="text-gray-100 bg-gray-200 rounded-lg font-semibold text-2xl w-10 grid place-items-center aspect-square "
+			className="text-gray-100 bg-gray-200 rounded-lg font-semibold text-2xl w-14 grid place-items-center aspect-square "
 		>
 			{children}
 		</button>
