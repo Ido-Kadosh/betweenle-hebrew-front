@@ -1,8 +1,12 @@
-import { GuessDirection } from '../types/Game';
+import { GuessResult } from '../types/Game';
 
-const guessWord = async (guess: string): Promise<GuessDirection> => {
+const word = 'יהלום';
+
+const guessWord = async (guess: string): Promise<GuessResult> => {
 	if (guess.length !== 5) throw new Error('invalid word length');
-	return 'BOTTOM';
+	if (guess < word) return 'TOP';
+	else if (guess > word) return 'BOTTOM';
+	else return 'CORRECT';
 };
 
 export const gameService = {
