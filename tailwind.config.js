@@ -13,15 +13,21 @@ export default {
 					100: '#333333',
 					200: '#cccccc',
 				},
+				error: '#4d0b0b',
 			},
 			keyframes: {
 				slideUp: {
 					'0%': { transform: 'translateY(0)' },
 					'100%': { transform: 'translateY(-115%)' },
 				},
+				slideDown: {
+					'0%': { transform: 'translateY(0)' },
+					'100%': { transform: 'translateY(115%)' },
+				},
 			},
 			animation: {
 				slideUp: 'slideUp 0.5s forwards',
+				slideDown: 'slideDown 0.5s forwards',
 			},
 		},
 	},

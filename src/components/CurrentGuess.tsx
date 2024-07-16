@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
+import { GuessDirection } from '../types/Game';
 
 interface PropTypes {
 	guess: string;
-	shouldHighlight: boolean;
-	onHighlightComplete: () => void;
+	slideDirection: GuessDirection | null;
+	onHighlightComplete: (direction: GuessDirection | null) => void;
 }
-const CurrentGuess = ({ guess, shouldHighlight, onHighlightComplete }: PropTypes) => {
+const CurrentGuess = ({ guess, slideDirection, onHighlightComplete }: PropTypes) => {
 	const [highlightIndex, setHighlightIndex] = useState<number>(-1);
 	const [slideIndex, setSlideIndex] = useState<number>(-1);
 
 	useEffect(() => {
 		// highlight start
-		if (shouldHighlight && highlightIndex < 5) {
+		if (slideDirection && highlightIndex < 5) {
 			const timer = setTimeout(() => {
 				setHighlightIndex(prev => prev + 1);
 			}, 100);
@@ -19,7 +20,7 @@ const CurrentGuess = ({ guess, shouldHighlight, onHighlightComplete }: PropTypes
 		}
 
 		// slide start
-		if (highlightIndex === 5 && shouldHighlight) {
+		if (highlightIndex === 5 && slideDirection) {
 			setTimeout(() => {
 				setSlideIndex(0);
 			}, 250);
@@ -27,11 +28,11 @@ const CurrentGuess = ({ guess, shouldHighlight, onHighlightComplete }: PropTypes
 		}
 
 		// reset slide and highlight indices
-		if (!shouldHighlight) {
+		if (!slideDirection) {
 			setHighlightIndex(-1);
 			setSlideIndex(-1);
 		}
-	}, [highlightIndex, shouldHighlight]);
+	}, [highlightIndex, slideDirection]);
 
 	useEffect(() => {
 		//slide start
@@ -44,7 +45,7 @@ const CurrentGuess = ({ guess, shouldHighlight, onHighlightComplete }: PropTypes
 
 		if (slideIndex === 5) {
 			setTimeout(() => {
-				onHighlightComplete();
+				onHighlightComplete(slideDirection);
 			}, 750);
 		}
 	}, [slideIndex]);
@@ -59,7 +60,8 @@ const CurrentGuess = ({ guess, shouldHighlight, onHighlightComplete }: PropTypes
 
 	const getBoxClassName = (letter: string, idx: number) => {
 		let className = '';
-		if (idx < slideIndex) className += 'animate-slideUp ';
+		if (idx < slideIndex && slideDirection === 'TOP') className += 'animate-slideUp ';
+		else if (idx < slideIndex && slideDirection === 'BOTTOM') className += 'animate-slideDown ';
 		if (idx <= highlightIndex) className += 'bg-blue-200';
 		else if (letter) className += 'bg-orange';
 		return className;
