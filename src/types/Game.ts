@@ -1,1 +1,1 @@
-export type GuessResult = 'TOP' | 'BOTTOM' | 'CORRECT';
+export type GuessAnimation = 'TOP' | 'BOTTOM' | 'CORRECT' | 'INCORRECT' | 'SHORT' | 'BETWEEN' | null;
