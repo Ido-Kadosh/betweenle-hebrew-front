@@ -1,14 +1,32 @@
-import { GuessResult } from '../types/Game';
+import { GuessAnimation } from '../types/Game';
+import { httpService } from './http.service';
 
-const word = 'יהלום';
+const BASE_URL = 'game';
 
-const guessWord = async (guess: string): Promise<GuessResult> => {
-	if (guess.length !== 5) throw new Error('invalid word length');
+const checkIsWord = async (guess: string): Promise<boolean> => {
+	return httpService.get(BASE_URL + '/check', { guess });
+};
+
+const compareWords = async (guess: string, word: string): Promise<GuessAnimation> => {
 	if (guess < word) return 'TOP';
 	else if (guess > word) return 'BOTTOM';
 	else return 'CORRECT';
 };
 
+const getDailyWord = (): Promise<string> => {
+	return httpService.get(BASE_URL + '/word');
+};
+
+const resetGame = () => {
+	localStorage.removeItem('topGuess');
+	localStorage.removeItem('bottomGuess');
+	localStorage.removeItem('guessCount');
+	location.reload();
+};
+
 export const gameService = {
-	guessWord,
+	checkIsWord,
+	compareWords,
+	getDailyWord,
+	resetGame,
 };
