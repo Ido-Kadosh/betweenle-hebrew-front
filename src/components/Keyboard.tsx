@@ -7,7 +7,7 @@ const keys = [
 	['ץ', 'ת', 'צ', 'מ', 'נ', 'ה', 'ב', 'ס', 'ז'],
 ];
 interface PropTypes {
-	onKeyPress: Function;
+	onKeyPress: (key: string) => void;
 }
 const Keyboard = ({ onKeyPress }: PropTypes) => {
 	return (
