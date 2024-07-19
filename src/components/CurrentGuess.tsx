@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react';
-import { GuessResult } from '../types/Game';
+import { GuessAnimation } from '../types/Game';
 
 interface PropTypes {
 	guess: string;
-	slideDirection: GuessResult | null;
-	onHighlightComplete: (direction: GuessResult | null) => void;
+	animation: GuessAnimation | null;
+	onHighlightComplete: (direction: GuessAnimation | null) => void;
 }
-const CurrentGuess = ({ guess, slideDirection, onHighlightComplete }: PropTypes) => {
+const CurrentGuess = ({ guess, animation, onHighlightComplete }: PropTypes) => {
 	const [highlightIndex, setHighlightIndex] = useState<number>(-1);
 	const [slideIndex, setSlideIndex] = useState<number>(-1);
+	const [shake, setShake] = useState<boolean>(false);
 
 	useEffect(() => {
 		// highlight start
-		if (slideDirection && highlightIndex < 5) {
+		if (highlightIndex < 5 && animation && (animation == 'TOP' || animation === 'BOTTOM')) {
 			const timer = setTimeout(() => {
 				setHighlightIndex(prev => prev + 1);
 			}, 100);
@@ -20,7 +21,7 @@ const CurrentGuess = ({ guess, slideDirection, onHighlightComplete }: PropTypes)
 		}
 
 		// slide start
-		if (highlightIndex === 5 && slideDirection && slideDirection !== 'CORRECT') {
+		if (highlightIndex === 5 && animation && (animation === 'TOP' || animation === 'BOTTOM')) {
 			setTimeout(() => {
 				setSlideIndex(0);
 			}, 250);
@@ -28,11 +29,11 @@ const CurrentGuess = ({ guess, slideDirection, onHighlightComplete }: PropTypes)
 		}
 
 		// reset slide and highlight indices
-		if (!slideDirection) {
+		if (!animation) {
 			setHighlightIndex(-1);
 			setSlideIndex(-1);
 		}
-	}, [highlightIndex, slideDirection]);
+	}, [highlightIndex, animation]);
 
 	useEffect(() => {
 		//slide start
@@ -45,10 +46,21 @@ const CurrentGuess = ({ guess, slideDirection, onHighlightComplete }: PropTypes)
 
 		if (slideIndex === 5) {
 			setTimeout(() => {
-				onHighlightComplete(slideDirection);
+				onHighlightComplete(animation);
 			}, 750);
 		}
 	}, [slideIndex]);
+
+	useEffect(() => {
+		if (animation === 'INCORRECT' || animation === 'BETWEEN' || animation === 'SHORT') {
+			setShake(true);
+			const timer = setTimeout(() => {
+				setShake(false);
+				onHighlightComplete(animation);
+			}, 500);
+			return () => clearTimeout(timer);
+		}
+	}, [animation]);
 
 	const getBoxesToDisplay = () => {
 		let boxes = [];
@@ -58,23 +70,30 @@ const CurrentGuess = ({ guess, slideDirection, onHighlightComplete }: PropTypes)
 		return boxes;
 	};
 
+	const getOutlineClassName = () => {
+		let className = '';
+		if (shake && (animation === 'INCORRECT' || animation === 'SHORT')) className += 'animate-shakeHorizontal ';
+		else if (shake && animation === 'BETWEEN') className += 'animate-shakeVertical ';
+		return className;
+	};
+
 	const getBoxClassName = (letter: string, idx: number) => {
 		let className = '';
 
 		// when in slide
-		if (idx < slideIndex && slideDirection === 'TOP') className += 'animate-slideUp ';
-		else if (idx < slideIndex && slideDirection === 'BOTTOM') className += 'animate-slideDown ';
+		if (idx < slideIndex && animation === 'TOP') className += 'animate-slideUp ';
+		else if (idx < slideIndex && animation === 'BOTTOM') className += 'animate-slideDown ';
 
 		// when in highlight (before slide)
-		if (idx <= highlightIndex && slideDirection === 'CORRECT') className += 'bg-success';
-		else if (idx <= highlightIndex) 'bg-blue-200';
+		if (idx <= highlightIndex && animation === 'CORRECT') className += 'bg-success ';
+		else if (idx <= highlightIndex) className += 'bg-blue-200 ';
 		// when not in slide or highlight
-		else if (letter) className += 'bg-orange';
+		else if (letter) className += 'bg-orange ';
 		return className;
 	};
 
 	return (
-		<div className="flex gap-1">
+		<div className={`flex gap-1 ${getOutlineClassName()}`}>
 			{getBoxesToDisplay().map((letter, idx) => (
 				<div className="relative mb-3" key={idx}>
 					<div className="absolute inset-0 border-2 border-slate-500"></div>
