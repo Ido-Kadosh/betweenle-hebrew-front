@@ -1,10 +1,13 @@
+import MsgProvider from './contexts/MsgContext/MsgProvider';
 import GamePage from './pages/GamePage';
 
 function App() {
 	return (
-		<main className="max-w-4xl m-auto h-screen">
-			<GamePage />
-		</main>
+		<MsgProvider>
+			<main className="max-w-4xl m-auto h-screen">
+				<GamePage />
+			</main>
+		</MsgProvider>
 	);
 }
 

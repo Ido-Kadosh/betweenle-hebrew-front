@@ -1,43 +1,42 @@
-import { useState, useEffect, useRef } from 'react';
-import { eventBus } from '../services/eventBus.service.js';
+import { ReactNode, useEffect, useRef } from 'react';
+import { useMsg } from '../contexts/MsgContext/useMsg.js';
 
-export interface Msg {
-	txt: string;
+export interface IMsg {
+	txt: string | ReactNode;
 	type: 'success' | 'error';
 }
 
-export const UserMsg = () => {
-	const [msg, setMsg] = useState<Msg | null>(null);
+const UserMsg = () => {
 	const timeoutIdRef = useRef<number | null>(null);
+	const { msg, setMsg } = useMsg();
 
 	useEffect(() => {
-		const unsubscribe = eventBus.on('show-msg', msg => {
-			setMsg(msg);
+		if (msg !== null) {
 			if (timeoutIdRef.current) {
 				clearTimeout(timeoutIdRef.current);
 				timeoutIdRef.current = null;
 			}
-			timeoutIdRef.current = window.setTimeout(closeMsg, 5000);
-		});
-
-		return () => {
-			unsubscribe();
-		};
-	}, []);
+			timeoutIdRef.current = window.setTimeout(closeMsg, 3000);
+		}
+	}, [msg]);
 
 	const closeMsg = () => {
 		setMsg(null);
 	};
 
-	if (!msg) return <span></span>;
-
 	return (
-		<section
-			className={`grid place-items-center absolute inset-0 max-w-max m-auto z-[99999] text-white text-xl font-semibold min-w-max px-8 h-14 rounded-lg ${
-				msg.type === 'error' ? 'bg-error' : 'bg-gray-500'
-			}`}
-		>
-			{msg.txt}
-		</section>
+		<>
+			{msg && (
+				<section
+					className={`absolute inset-0 max-w-max m-auto  z-[99999] text-white text-xl text-center font-semibold min-w-max max-h-min px-8 py-4 rounded-lg ${
+						msg.type === 'error' ? 'bg-error' : 'bg-gray-500'
+					}`}
+				>
+					{msg.txt}
+				</section>
+			)}
+		</>
 	);
 };
+
+export default UserMsg;
