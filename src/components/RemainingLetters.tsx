@@ -1,4 +1,4 @@
-import { UserMsg } from './UserMsg';
+import UserMsg from './UserMsg';
 
 const letters = [
 	'א',
@@ -25,14 +25,28 @@ const letters = [
 	'ת',
 ];
 
-const RemainingLetters = () => {
+interface PropTypes {
+	guess: string;
+	topGuess: string;
+	bottomGuess: string;
+}
+const RemainingLetters = ({ guess, topGuess, bottomGuess }: PropTypes) => {
+	const isLetterInRange = (letter: string): boolean => {
+		const newGuess = guess + letter;
+		const slicedTopGuess = topGuess.slice(0, newGuess.length);
+		const slicedBottomGuess = bottomGuess.slice(0, newGuess.length);
+		return newGuess >= slicedTopGuess && newGuess <= slicedBottomGuess;
+	};
+
 	return (
-		<div className="relative my-8">
+		<div className="relative py-8">
 			<div className="grid gap-1 grid-cols-11 grid-flow-row">
 				{letters.map(letter => (
 					<div
 						key={letter}
-						className="grid place-items-center text-[#9a867c] bg-[#d8ccc7]  rounded-full w-8 font-semibold text-lg  aspect-square"
+						className={`grid place-items-center   rounded-full w-8 font-semibold text-lg aspect-square ${
+							isLetterInRange(letter) ? 'text-[#9a867c] bg-[#d8ccc7]' : 'bg-[#e8e6e4] text-[#d5cfcf]'
+						}`}
 					>
 						{letter}
 					</div>
