@@ -14,7 +14,7 @@ const compareWords = async (guess: string, word: string): Promise<GuessAnimation
 };
 
 const getDailyWord = (): Promise<string> => {
-	return httpService.get(BASE_URL + '/word');
+	return httpService.get(BASE_URL + '/daily');
 };
 
 const resetGame = () => {
@@ -24,9 +24,14 @@ const resetGame = () => {
 	location.reload();
 };
 
+const getTimeTilMidnight = async () => {
+	return httpService.get(BASE_URL + 'time-til-midnight');
+};
+
 export const gameService = {
 	checkIsWord,
 	compareWords,
 	getDailyWord,
 	resetGame,
+	getTimeTilMidnight,
 };
