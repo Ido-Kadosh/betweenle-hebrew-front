@@ -13,7 +13,7 @@ const CurrentGuess = ({ guess, animation, onHighlightComplete }: PropTypes) => {
 
 	useEffect(() => {
 		// highlight start
-		if (highlightIndex < 5 && animation && (animation == 'TOP' || animation === 'BOTTOM')) {
+		if (highlightIndex < 5 && animation && (animation == 'TOP' || animation === 'BOTTOM' || animation === 'CORRECT')) {
 			const timer = setTimeout(() => {
 				setHighlightIndex(prev => prev + 1);
 			}, 100);
@@ -21,11 +21,18 @@ const CurrentGuess = ({ guess, animation, onHighlightComplete }: PropTypes) => {
 		}
 
 		// slide start
-		if (highlightIndex === 5 && animation && (animation === 'TOP' || animation === 'BOTTOM')) {
-			setTimeout(() => {
-				setSlideIndex(0);
-			}, 250);
-			return;
+		if (highlightIndex === 5 && animation) {
+			let timer: number;
+			if (animation === 'TOP' || animation === 'BOTTOM') {
+				timer = window.setTimeout(() => {
+					setSlideIndex(0);
+				}, 250);
+			} else if (animation === 'CORRECT') {
+				timer = window.setTimeout(() => {
+					onHighlightComplete(animation);
+				}, 750);
+			}
+			return () => timer && clearTimeout(timer);
 		}
 
 		// reset slide and highlight indices
@@ -43,11 +50,11 @@ const CurrentGuess = ({ guess, animation, onHighlightComplete }: PropTypes) => {
 			}, 100);
 			return () => clearTimeout(timer);
 		}
-
 		if (slideIndex === 5) {
-			setTimeout(() => {
+			const timer = setTimeout(() => {
 				onHighlightComplete(animation);
 			}, 750);
+			return () => clearTimeout(timer);
 		}
 	}, [slideIndex]);
 
