@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useState, useRef, ReactNode } from 'react';
 import CurrentGuess from '../components/CurrentGuess';
 import PreviousGuess from '../components/PreviousGuess';
 import Keyboard from '../components/Keyboard';
@@ -8,6 +8,12 @@ import { GuessAnimation } from '../types/Game';
 import GuessCounter from '../components/GuessCounter';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { useMsg } from '../contexts/MsgContext/useMsg';
+import Modal from '../components/Modal';
+import GameEndModal from '../components/GameEndModal';
+import { Link } from 'react-router-dom';
+import { IoHome, IoStatsChart } from 'react-icons/io5';
+import Separator from '../components/Separator';
+import Stats from '../components/Stats';
 
 const MAX_GUESSES = 14;
 
@@ -16,20 +22,41 @@ const GamePage = () => {
 	const [topGuess, setTopGuess] = useLocalStorage('topGuess', 'אאאאא');
 	const [bottomGuess, setBottomGuess] = useLocalStorage('bottomGuess', 'תתתתת');
 	const [guessCount, setGuessCount] = useLocalStorage('guessCount', 1);
-	const [guess, setGuess] = useState<string>('');
+	const [stats, setStats] = useLocalStorage('dailyStats', gameService.getDefaultStats());
+	const [isWin, setIsWin] = useLocalStorage('isDailyWin', false);
+	const [isLoss, setIsLoss] = useLocalStorage('isDailyLoss', false);
+	const [score, setScore] = useLocalStorage('dailyScore', 5);
+	const [guess, setGuess] = useState('');
 	const [animation, setAnimation] = useState<GuessAnimation | null>(null);
-	const isKeyPressAllowedRef = useRef<boolean>(true);
+	const isKeyPressAllowedRef = useRef(true);
+	const [modalData, setModalData] = useState<ReactNode | null>(null);
 	const { showErrorMsg } = useMsg();
 
 	useEffect(() => {
+		setGuess('');
+	}, [topGuess, bottomGuess]);
+
+	useEffect(() => {
 		const getDailyWord = async () => {
-			const newDailyWord = await gameService.getDailyWord();
-			if (newDailyWord !== dailyWord) {
-				gameService.resetGame();
-				setDailyWord(newDailyWord);
+			try {
+				const newDailyWord = await gameService.getDailyWord();
+				if (newDailyWord !== dailyWord) {
+					gameService.resetGame();
+					setDailyWord(newDailyWord);
+				}
+			} catch (err) {
+				showErrorMsg('שגיאת שרת');
 			}
 		};
 		getDailyWord();
+
+		if (isWin) {
+			setGuess(dailyWord);
+			onGuess(dailyWord);
+		}
+		if (isLoss) {
+			onShowStats();
+		}
 	}, []);
 
 	useEffect(() => {
@@ -42,32 +69,31 @@ const GamePage = () => {
 		return () => {
 			window.removeEventListener('keyup', onKeyPress);
 		};
-	}, [guess]);
-
-	useEffect(() => {
-		setGuess('');
-	}, [topGuess, bottomGuess]);
+	}, [guess, modalData]);
 
 	const onHighlightComplete = useCallback(
 		(animation: GuessAnimation | null) => {
 			// increment guessCount and check if gameOver
 			if (animation === 'TOP' || animation === 'BOTTOM') {
-				setGuessCount(prev => {
-					if (prev === MAX_GUESSES) handleGameOver();
-					return prev + 1;
-				});
 				const method = animation === 'TOP' ? setTopGuess : setBottomGuess;
 				method(guess);
+				if (guessCount === MAX_GUESSES) return handleLoss();
+				setGuessCount(prev => prev + 1);
 			}
+			if (animation === 'CORRECT') return handleWin();
 			setAnimation(null);
 			isKeyPressAllowedRef.current = true;
 		},
 		[guess]
 	);
 
+	useEffect(() => {
+		setScore(calculateScore());
+	}, [guessCount]);
+
 	const handleKeyPress = useCallback(
 		(key: string) => {
-			if (!isKeyPressAllowedRef.current) return; // do not handle key presses during animation
+			if (!isKeyPressAllowedRef.current || modalData) return; // do not handle key presses during animation or when modal is open
 			if (guess.length > 0 && (key === 'Backspace' || key === 'Delete')) {
 				setGuess(prevGuess => prevGuess.slice(0, -1));
 			} else if (guess.length < 5 && /^[א-ת]$/.test(key)) {
@@ -76,65 +102,126 @@ const GamePage = () => {
 				onGuess();
 			}
 		},
-		[guess, isKeyPressAllowedRef.current]
+		[guess, isKeyPressAllowedRef.current, modalData]
 	);
 
-	const handleGameOver = () => {
-		console.log('over!');
+	const handleLoss = () => {
+		setAnimation(null);
+		setIsLoss(true);
 		isKeyPressAllowedRef.current = false;
+		setStats(prev => {
+			const newStats = {
+				...prev,
+				played: prev.played + 1,
+				currentStreak: 0,
+			};
+			setModalData(<GameEndModal word={dailyWord} stats={newStats} />);
+
+			return newStats;
+		});
 	};
 
 	const handleWin = () => {
 		isKeyPressAllowedRef.current = false;
+		setIsWin(true);
+
+		setStats(prev => {
+			// only set stats if not already won today
+			// this needs to happen inside setStats, so setModalData runs regardless.
+			const newStats = isWin
+				? prev
+				: {
+						...prev,
+						played: prev.played + 1,
+						wins: prev.wins + 1,
+						currentStreak: prev.currentStreak + 1,
+						bestStreak: Math.max(prev.currentStreak + 1, prev.bestStreak),
+						scores: prev.scores.map((s, idx) => (idx === score - 1 ? s + 1 : s)),
+				  };
+			setModalData(<GameEndModal word={dailyWord} stats={newStats} isWin={true} score={score} />);
+			return newStats;
+		});
 	};
 
-	const onGuess = async () => {
+	const calculateScore = () => {
+		if (guessCount <= 5) {
+			return 5;
+		} else if (guessCount <= 8) {
+			return 4;
+		} else if (guessCount <= 11) {
+			return 3;
+		} else if (guessCount <= 13) {
+			return 2;
+		} else if (guessCount === 14) {
+			return 1;
+		} else {
+			return 0;
+		}
+	};
+
+	const onGuess = async (word = '') => {
+		const guessWord = word || guess;
+		isKeyPressAllowedRef.current = false;
 		try {
-			if (guess.length !== 5) {
+			if (guessWord.length !== 5) {
 				setAnimation('SHORT');
-				isKeyPressAllowedRef.current = false;
+
 				return showErrorMsg('מילה קצרה מדי');
 			}
-			const isWord = await gameService.checkIsWord(guess);
+			const isWord = await gameService.checkIsWord(guessWord);
 			if (!isWord) {
 				setAnimation('INCORRECT');
-				isKeyPressAllowedRef.current = false;
+
 				return showErrorMsg('מילה לא קיימת');
 			}
 
-			if (guess <= topGuess) {
+			if (guessWord <= topGuess) {
 				setAnimation('BETWEEN');
-				isKeyPressAllowedRef.current = false;
+
 				return showErrorMsg(
 					<div>
 						הכנס מילה המגיעה במילון אחרי <div className="font-bold">{topGuess}</div>
 					</div>
 				);
-			} else if (guess >= bottomGuess) {
+			} else if (guessWord >= bottomGuess) {
 				setAnimation('BETWEEN');
-				isKeyPressAllowedRef.current = false;
+
 				return showErrorMsg(
 					<div>
 						הכנס מילה המגיעה במילון לפני <div className="font-bold">{bottomGuess}</div>
 					</div>
 				);
 			}
-			const res = await gameService.compareWords(guess, dailyWord);
-			if (res === 'CORRECT') {
-				handleWin();
-			}
+			const res = await gameService.compareWords(guessWord, dailyWord);
 			setAnimation(res);
-			isKeyPressAllowedRef.current = false;
 		} catch (err) {
-			showErrorMsg('שגיאה');
+			showErrorMsg('שגיאת שרת');
 		}
 	};
 
+	const onShowStats = () => {
+		if (modalData) return setModalData(null); // hide
+		if (isWin) return setModalData(<GameEndModal word={dailyWord} stats={stats} isWin={true} score={score} />); // win
+		if (isLoss) return setModalData(<GameEndModal word={dailyWord} stats={stats} />); // loss
+		setModalData(<Stats stats={stats} />); // show default stats
+	};
+
 	return (
-		<div className="flex flex-col h-full">
-			<header className="mt-2">
-				<h1 className="text-4xl font-bold">באמצעל</h1>
-				<GuessCounter count={guessCount} maxGuesses={MAX_GUESSES} />
+		<div className="flex flex-col h-full relative">
+			<header className="max-w-fit m-auto mb-10">
+				<div className="flex items-center  justify-between">
+					<div className="flex items-center gap-5 ">
+						<Link to="/">
+							<IoHome size={32} />
+						</Link>
+						<h1 className="text-4xl font-bold">באמצעל</h1>
+					</div>
+					<button onClick={onShowStats}>
+						<IoStatsChart size={32} />
+					</button>
+				</div>
+				<Separator />
+				<GuessCounter count={guessCount} maxGuesses={MAX_GUESSES} score={score} />
 			</header>
 			<div className="self-center mt-5 flex flex-col items-center h-full ">
 				<div>
@@ -142,9 +229,10 @@ const GamePage = () => {
 					<CurrentGuess guess={guess} animation={animation} onHighlightComplete={onHighlightComplete} />
 					<PreviousGuess guess={bottomGuess} />
 				</div>
-				<RemainingLetters />
+				<RemainingLetters guess={guess} topGuess={topGuess} bottomGuess={bottomGuess} />
 				<Keyboard onKeyPress={handleKeyPress} />
 			</div>
+			{modalData && <Modal onCloseModal={() => setModalData(null)}>{modalData}</Modal>}
 		</div>
 	);
 };
