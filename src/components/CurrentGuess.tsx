@@ -10,7 +10,6 @@ const CurrentGuess = ({ guess, animation, onHighlightComplete }: PropTypes) => {
 	const [highlightIndex, setHighlightIndex] = useState<number>(-1);
 	const [slideIndex, setSlideIndex] = useState<number>(-1);
 	const [shake, setShake] = useState<boolean>(false);
-
 	useEffect(() => {
 		// highlight start
 		if (highlightIndex < 5 && animation && (animation == 'TOP' || animation === 'BOTTOM' || animation === 'CORRECT')) {

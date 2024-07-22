@@ -7,11 +7,14 @@ export default {
 				blue: {
 					100: '#03a9f5',
 					200: '#0277BD',
+					300: '#039be6',
 				},
 				orange: '#f67b01',
 				gray: {
 					100: '#333333',
-					200: '#cccccc',
+					200: '#888888',
+					300: '#cacaca',
+					400: '#eeeeee',
 				},
 				error: '#4d0b0b',
 				success: '#388e3d',

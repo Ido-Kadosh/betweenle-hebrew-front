@@ -46,7 +46,7 @@ const HomePage = () => {
 				המילה היומית
 			</button>
 			{timeTilMidnight !== null && (
-				<div className="text-2xl font-bold text-gray-300">
+				<div className="text-2xl font-bold text-gray-200">
 					המילה היומית הבאה בעוד: <div>{getDailyWordCountdown()}</div>
 				</div>
 			)}
