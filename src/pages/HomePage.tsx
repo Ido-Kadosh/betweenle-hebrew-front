@@ -36,7 +36,7 @@ const HomePage = () => {
 	};
 
 	return (
-		<div className="m-auto max-w-xl text-center space-y-5">
+		<div className="m-auto max-w-xl text-center space-y-5 pt-4">
 			<h1 className="text-6xl font-bold">באמצעל</h1>
 			<button
 				className="bg-blue-300 text-white font-bold w-full text-3xl py-2 rounded-md flex items-center justify-center gap-3"

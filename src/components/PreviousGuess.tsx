@@ -12,7 +12,7 @@ const PreviousGuess = ({ guess }: PropTypes) => {
 			<div className="flex gap-1">
 				{guess.split('').map((letter, idx) => (
 					<div
-						className={`${getGuessColor()} mb-3 text-4xl font-semibold w-20 grid place-items-center bg-blue-100 aspect-square`}
+						className={`${getGuessColor()} mb-[0.15em] text-clamp-4xl font-semibold w-[1.75em] aspect-square grid place-items-center bg-blue-100`}
 						key={idx}
 					>
 						{letter}

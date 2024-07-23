@@ -39,12 +39,12 @@ const RemainingLetters = ({ guess, topGuess, bottomGuess }: PropTypes) => {
 	};
 
 	return (
-		<div className="relative py-8">
+		<div className="relative py-[8vh]">
 			<div className="grid gap-1 grid-cols-11 grid-flow-row">
 				{letters.map(letter => (
 					<div
 						key={letter}
-						className={`grid place-items-center   rounded-full w-8 font-semibold text-lg aspect-square ${
+						className={`grid place-items-center rounded-full w-[1.75em] font-semibold text-clamp-lg aspect-square ${
 							isLetterInRange(letter) ? 'text-[#9a867c] bg-[#d8ccc7]' : 'bg-[#e8e6e4] text-[#d5cfcf]'
 						}`}
 					>

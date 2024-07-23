@@ -99,15 +99,15 @@ const CurrentGuess = ({ guess, animation, onHighlightComplete }: PropTypes) => {
 	};
 
 	return (
-		<div className={`flex gap-1 ${getOutlineClassName()}`}>
+		<div className={`flex gap-1 text-clamp-4xl ${getOutlineClassName()}`}>
 			{getBoxesToDisplay().map((letter, idx) => (
-				<div className="relative mb-3" key={idx}>
+				<div className="relative mb-[0.15em]" key={idx}>
 					<div className="absolute inset-0 border-2 border-slate-500"></div>
 					<div
-						className={`${getBoxClassName(
+						className={`font-semibold w-[1.75em] grid place-items-center aspect-square text-white relative ${getBoxClassName(
 							letter,
 							idx
-						)} text-4xl font-semibold w-20 grid place-items-center aspect-square text-white relative`}
+						)}`}
 					>
 						{letter}
 					</div>

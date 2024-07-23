@@ -15,7 +15,7 @@ const GuessCounter = ({ count, maxGuesses, score }: PropTypes) => {
 
 			let marginClass = '';
 			if (breaks.includes(i)) {
-				marginClass = 'me-5';
+				marginClass = 'me-clamp-counter-circle';
 			}
 
 			circles.push(`${colorClass} ${marginClass}`);
@@ -24,21 +24,21 @@ const GuessCounter = ({ count, maxGuesses, score }: PropTypes) => {
 	};
 
 	return (
-		<div className="flex font-semibold items-center gap-8 justify-center">
+		<div className="flex font-semibold items-center sm:gap-8 gap-3 justify-center w-full">
 			<div className="flex flex-col items-center text-gray-100 font-bold">
-				<span className="font-bold text-sm">ניחוש</span>
-				<span className="text-xl">
+				<span className="font-bold text-clamp-sm">ניחוש</span>
+				<span className="text-clamp-lg min-w-max">
 					{maxGuesses} / {count}
 				</span>
 			</div>
-			<div className="flex gap-1">
+			<div className="flex flex-1 justify-center gap-1">
 				{getCirclesToDisplay().map((colorClass, idx) => (
-					<div key={idx} className={`${colorClass} rounded-full w-4 h-4`}></div>
+					<div key={idx} className={`${colorClass} rounded-full w-clamp-counter-circle aspect-square`}></div>
 				))}
 			</div>
 			<div className="flex flex-col items-center text-gray-100 font-bold">
-				<span className=" text-sm">ניקוד</span>
-				<span className="text-xl">
+				<span className="text-clamp-sm">ניקוד</span>
+				<span className="text-clamp-lg min-w-max">
 					{5} / {score}
 				</span>
 			</div>

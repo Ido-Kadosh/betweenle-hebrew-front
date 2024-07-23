@@ -8,9 +8,12 @@ interface PropTypes {
 
 const Modal = ({ children, onCloseModal }: PropTypes) => {
 	return (
-		<div className="absolute inset-0 m-auto grid place-items-center  shadow-[0_0_3em_0.2em_#555] bg-white max-w-fit max-h-fit text-3xl p-4">
+		<div className="absolute inset-0 m-auto grid place-items-center shadow-[0_0_3em_0.2em_#555] bg-white max-w-fit max-h-fit text-clamp-lg py-[1em] px-[0.5em]">
 			{children}
-			<button className="border-2 rounded-full border-black absolute top-4 left-4" onClick={onCloseModal}>
+			<button
+				className="border-[0.1em] text-[1.5em] rounded-full border-black absolute top-[0.5em] left-[0.5em]"
+				onClick={onCloseModal}
+			>
 				<IoClose />
 			</button>
 		</div>

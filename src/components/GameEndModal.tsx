@@ -14,13 +14,13 @@ const GameEndModal = ({ word, stats, isWin, score }: PropTypes) => {
 
 	return (
 		<div>
-			<div className="font-bold flex flex-col items-center mb-10">
-				<h1 className="text-5xl mb-5">{word}</h1>
-				<span className="text-xl mb-3">{isWin ? 'ניצחון' : 'הפסד'}</span>
+			<div className="font-bold flex flex-col items-center ">
+				<h1 className="text-[2em]/tight mb-[0.5em]">{word}</h1>
+				<span className="text-[1em]/tight mb-3">{isWin ? 'ניצחון' : 'הפסד'}</span>
 				{score && (
-					<div className="flex">
+					<div className="flex text-[2.3em]/tight">
 						{Array.from({ length: score }).map((_, idx) => (
-							<FaTrophy key={idx} color="gold" size={48} className="mx-1" />
+							<FaTrophy key={idx} color="gold" className="mx-1" />
 						))}
 					</div>
 				)}
@@ -29,14 +29,14 @@ const GameEndModal = ({ word, stats, isWin, score }: PropTypes) => {
 			<div className="flex gap-2">
 				<Link
 					to="/"
-					className="bg-slate-500 text-white py-4 my-4 rounded-md flex gap-2 flex-1 justify-center items-center font-semibold"
+					className="bg-slate-500 text-white text-[1.2em]/tight py-[0.7em] px-[0.2em] rounded-md flex gap-2 flex-1 justify-center items-center font-semibold mx-[0.2em]"
 				>
 					<IoArrowForwardOutline className="mt-1" />
 					תפריט
 				</Link>
 				<button
 					onClick={onShare}
-					className="bg-orange text-white py-4 my-4 rounded-md flex gap-2 flex-1 justify-center items-center font-semibold"
+					className="bg-orange text-white text-[1.2em]/tight py-[0.7em] px-[0.2em] rounded-md flex gap-2 flex-1 justify-center items-center font-semibold mx-[0.2em]"
 				>
 					<IoShareSocial className="mt-1" />
 					שיתוף

@@ -19,6 +19,27 @@ export default {
 				error: '#4d0b0b',
 				success: '#388e3d',
 			},
+			fontSize: {
+				'clamp-xs': 'clamp(0.55rem, 1.67vh, 2.5vw)',
+				'clamp-sm': 'clamp(0.65rem, 1.94vh, 2.92vw)',
+				'clamp-base': 'clamp(0.75rem, 2.22vh, 3.33vw)',
+				'clamp-lg': 'clamp(0.9rem, 2.5vh, 3.75vw)',
+				'clamp-xl': 'clamp(1rem, 2.78vh, 4.17vw)',
+				'clamp-2xl': 'clamp(1.1rem, 3.33vh, 5vw)',
+				'clamp-3xl': 'clamp(1.35rem, 4.17vh, 6.25vw)',
+				'clamp-4xl': 'clamp(1.6rem, 5vh, 7.5vw)',
+				'clamp-5xl': 'clamp(2.1rem, 6.67vh, 10vw)',
+				'clamp-6xl': 'clamp(2.65rem, 8.33vh, 12.5vw)',
+				'clamp-7xl': 'clamp(3.2rem, 10vh, 15vw)',
+				'clamp-8xl': 'clamp(4.3rem, 13.33vh, 20vw)',
+				'clamp-9xl': 'clamp(5.7rem, 17.78vh, 26.67vw)',
+			},
+			width: {
+				'clamp-counter-circle': 'clamp(1vw, 1.8vh, 2.7vw)',
+			},
+			margin: {
+				'clamp-counter-circle': 'clamp(1vw, 2.7vh, 2.7vw)',
+			},
 			keyframes: {
 				slideUp: {
 					'0%': { transform: 'translateY(0)' },

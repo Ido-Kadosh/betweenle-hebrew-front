@@ -11,7 +11,7 @@ interface PropTypes {
 }
 const Keyboard = ({ onKeyPress }: PropTypes) => {
 	return (
-		<div className="flex flex-col gap-1 items-center">
+		<div className="flex flex-col gap-1 items-center px-2">
 			{keys.map((row, rowIdx) => (
 				<div key={rowIdx} className=" flex gap-1">
 					{rowIdx === 0 && (
@@ -26,7 +26,7 @@ const Keyboard = ({ onKeyPress }: PropTypes) => {
 					))}
 					{rowIdx === 0 && (
 						<KeyboardButton onClick={() => onKeyPress('Enter')}>
-							<IoSend size={20} style={{ transform: 'rotate(180deg)' }} />
+							<IoSend style={{ transform: 'rotate(180deg)' }} />
 						</KeyboardButton>
 					)}
 				</div>

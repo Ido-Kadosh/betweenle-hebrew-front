@@ -3,8 +3,9 @@ import { IStats } from '../types/Game';
 
 interface PropTypes {
 	stats: IStats;
+	showTitle?: boolean;
 }
-const Stats = ({ stats }: PropTypes) => {
+const Stats = ({ stats, showTitle }: PropTypes) => {
 	const calculateScorePercentage = (count: number) => {
 		if (!stats.played) return 0;
 		return Math.floor((count / stats.played) * 100);
@@ -14,29 +15,29 @@ const Stats = ({ stats }: PropTypes) => {
 
 	return (
 		<section>
-			<h2 className="font-bold text-center mb-4">סטטיסטיקה</h2>
-			<div className="grid grid-rows-2 grid-cols-5 grid-flow-col text-center gap-x-3 text-lg items-center mb-4">
-				<div className="self-end">משחקים</div>
-				<div className="text-4xl">{stats.played}</div>
-				<div className="self-end">נצחונות</div>
-				<div className="text-4xl">{stats.wins}</div>
-				<div className="self-end">%</div>
-				<div className="text-4xl">{(stats.wins / stats.played) * 100 || 0}</div>
-				<div className="self-end">הרצף הנוכחי</div>
-				<div className="text-4xl">{stats.currentStreak}</div>
-				<div>
+			{showTitle && <h2 className="font-bold text-center mb-4 text-[1em]/tight">סטטיסטיקה</h2>}
+			<div className="grid grid-rows-2 grid-cols-5 grid-flow-col text-center gap-x-3 items-center mb-[1em]">
+				<div className="self-end text-[0.75em]/tight">משחקים</div>
+				<div className="text-[2em]">{stats.played}</div>
+				<div className="self-end text-[0.75em]/tight">נצחונות</div>
+				<div className="text-[2em]">{stats.wins}</div>
+				<div className="self-end text-[0.75em]/tight">%</div>
+				<div className="text-[2em]">{(stats.wins / stats.played) * 100 || 0}</div>
+				<div className="self-end text-[0.75em]/tight">הרצף הנוכחי</div>
+				<div className="text-[2em]">{stats.currentStreak}</div>
+				<div className="text-[0.75em] self-end">
 					<div>הרצף</div>
 					הטוב ביותר
 				</div>
-				<div className="text-4xl">{stats.bestStreak}</div>
+				<div className="text-[2em]/tight">{stats.bestStreak}</div>
 			</div>
-			<div className="text-center text-xl mb-4">חלוקת ניקוד</div>
-			<div className="grid grid-rows-5 grid-cols-[auto_1fr_auto] gap-2 text-xl mb-4">
+			<div className="text-center mb-[1em]">חלוקת ניקוד</div>
+			<div className="grid grid-rows-5 grid-cols-[auto_1fr_auto] gap-2 mb-[1em]">
 				{reversedScores.map((count, score) => {
 					const percentage = calculateScorePercentage(count);
 					return (
 						<React.Fragment key={score}>
-							<div className="flex gap-1">
+							<div className="flex gap-1 mx-[0.5em]">
 								<span>%</span>
 								{percentage}
 							</div>
@@ -47,7 +48,7 @@ const Stats = ({ stats }: PropTypes) => {
 									</div>
 								)}
 							</div>
-							<div>{reversedScores.length - score}</div>
+							<div className="mx-[0.5em]">{reversedScores.length - score}</div>
 						</React.Fragment>
 					);
 				})}

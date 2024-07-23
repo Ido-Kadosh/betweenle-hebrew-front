@@ -203,27 +203,27 @@ const GamePage = () => {
 		if (modalData) return setModalData(null); // hide
 		if (isWin) return setModalData(<GameEndModal word={dailyWord} stats={stats} isWin={true} score={score} />); // win
 		if (isLoss) return setModalData(<GameEndModal word={dailyWord} stats={stats} />); // loss
-		setModalData(<Stats stats={stats} />); // show default stats
+		setModalData(<Stats stats={stats} showTitle />); // show default stats
 	};
 
 	return (
 		<div className="flex flex-col h-full relative">
-			<header className="max-w-fit m-auto mb-10">
-				<div className="flex items-center  justify-between">
+			<header className="sm:w-auto w-full mx-auto">
+				<div className="flex items-center justify-between">
 					<div className="flex items-center gap-5 ">
-						<Link to="/">
-							<IoHome size={32} />
+						<Link to="/" className="text-clamp-3xl">
+							<IoHome />
 						</Link>
-						<h1 className="text-4xl font-bold">באמצעל</h1>
+						<h1 className="text-clamp-4xl font-bold">באמצעל</h1>
 					</div>
-					<button onClick={onShowStats}>
-						<IoStatsChart size={32} />
+					<button onClick={onShowStats} className="text-clamp-3xl">
+						<IoStatsChart />
 					</button>
 				</div>
 				<Separator />
 				<GuessCounter count={guessCount} maxGuesses={MAX_GUESSES} score={score} />
 			</header>
-			<div className="self-center mt-5 flex flex-col items-center h-full ">
+			<div className="self-center flex flex-col flex-1 items-center sm:py-10 py-8 justify-end">
 				<div>
 					<PreviousGuess guess={topGuess} />
 					<CurrentGuess guess={guess} animation={animation} onHighlightComplete={onHighlightComplete} />

@@ -40,7 +40,7 @@ const KeyboardButton = ({ children, onClick }: PropTypes) => {
 			ref={buttonRef}
 			tabIndex={-1}
 			onClick={handleClick}
-			className="text-gray-100 bg-gray-300 rounded-lg font-semibold text-2xl w-14 grid place-items-center aspect-square "
+			className="text-gray-100 bg-gray-300 rounded-lg font-semibold text-clamp-2xl w-[1.5em] grid place-items-center aspect-[0.75] "
 		>
 			{children}
 		</button>
