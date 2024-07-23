@@ -1,0 +1,46 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout frontend repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Checkout backend repository
+        uses: actions/checkout@v2
+        with:
+          repository: Ido-Kadosh/betweenle-hebrew-back 
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: backend
+
+      - name: Copy build files to backend
+        run: |
+          rm -rf backend/public  
+          cp -r dist/ backend/public
+
+      - name: Commit and push changes to backend repository
+        run: |
+          cd backend
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git commit -m "chore: update build files from frontend"
+          git push
