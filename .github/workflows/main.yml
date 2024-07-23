@@ -35,6 +35,7 @@ jobs:
       - name: Copy build files to backend
         run: |
           rm -rf backend/public  
+          mkdir -p backend/public
           cp -r dist/* backend/public
 
       - name: Commit and push changes to backend repository
