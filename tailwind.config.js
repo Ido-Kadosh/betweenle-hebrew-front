@@ -16,6 +16,7 @@ export default {
 					300: '#cacaca',
 					400: '#eeeeee',
 				},
+				link: '#125fb3',
 				error: '#4d0b0b',
 				success: '#388e3d',
 			},
