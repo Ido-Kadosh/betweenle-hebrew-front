@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { GuessAnimation } from '../types/Game';
-
 interface PropTypes {
 	guess: string;
 	animation: GuessAnimation | null;
