@@ -13,7 +13,7 @@ const compareWords = async (guess: string, word: string): Promise<GuessAnimation
 	else return 'CORRECT';
 };
 
-const getDailyWord = (): Promise<string> => {
+const getDailyData = (): Promise<{ dailyWord: string; dayNumber: number }> => {
 	return httpService.get(BASE_URL + '/daily');
 };
 
@@ -43,7 +43,7 @@ const getDefaultStats = (): IStats => {
 export const gameService = {
 	checkIsWord,
 	compareWords,
-	getDailyWord,
+	getDailyData,
 	resetGame,
 	getTimeTilMidnight,
 	getDefaultStats,

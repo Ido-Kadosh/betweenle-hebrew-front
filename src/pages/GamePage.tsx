@@ -27,6 +27,7 @@ const GamePage = () => {
 	const [isLoss, setIsLoss] = useLocalStorage('isDailyLoss', false);
 	const [score, setScore] = useLocalStorage('dailyScore', 5);
 	const [guess, setGuess] = useState('');
+	const [dayNumber, setDayNumber] = useState(0);
 	const [animation, setAnimation] = useState<GuessAnimation | null>(null);
 	const isKeyPressAllowedRef = useRef(true);
 	const [modalData, setModalData] = useState<ReactNode | null>(null);
@@ -39,7 +40,8 @@ const GamePage = () => {
 	useEffect(() => {
 		const getDailyWord = async () => {
 			try {
-				const newDailyWord = await gameService.getDailyWord();
+				const { dailyWord: newDailyWord, dayNumber } = await gameService.getDailyData();
+				setDayNumber(dayNumber);
 				if (newDailyWord !== dailyWord) {
 					gameService.resetGame();
 					setDailyWord(newDailyWord);
@@ -215,6 +217,10 @@ const GamePage = () => {
 							<IoHome />
 						</Link>
 						<h1 className="text-clamp-4xl font-bold">באמצעל</h1>
+					</div>
+					<div className="text-clamp-sm font-bold">
+						<div className="leading-tight">מס</div>
+						<div className="leading-tight text-end">{dayNumber}</div>
 					</div>
 					<button onClick={onShowStats} className="text-clamp-3xl">
 						<IoStatsChart />
