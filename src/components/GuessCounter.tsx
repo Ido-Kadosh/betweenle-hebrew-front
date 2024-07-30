@@ -26,8 +26,8 @@ const GuessCounter = ({ count, maxGuesses, score }: PropTypes) => {
 	return (
 		<div className="flex font-semibold items-center sm:gap-8 gap-3 justify-center w-full">
 			<div className="flex flex-col items-center text-gray-100 font-bold">
-				<span className="font-bold text-clamp-sm">ניחוש</span>
-				<span className="text-clamp-base min-w-max">
+				<span className="font-bold text-clamp-sm/tight">ניחוש</span>
+				<span className="text-clamp-base/tight min-w-max">
 					{maxGuesses} / {count}
 				</span>
 			</div>
@@ -37,8 +37,8 @@ const GuessCounter = ({ count, maxGuesses, score }: PropTypes) => {
 				))}
 			</div>
 			<div className="flex flex-col items-center text-gray-100 font-bold">
-				<span className="text-clamp-sm">ניקוד</span>
-				<span className="text-clamp-base min-w-max">
+				<span className="text-clamp-sm/tight">ניקוד</span>
+				<span className="text-clamp-base/tight min-w-max">
 					{5} / {score}
 				</span>
 			</div>
