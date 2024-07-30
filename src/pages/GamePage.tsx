@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { IoHome, IoStatsChart } from 'react-icons/io5';
 import Separator from '../components/Separator';
 import Stats from '../components/Stats';
+import Proximity from '../components/Proximity';
 
 const MAX_GUESSES = 14;
 
@@ -26,6 +27,10 @@ const GamePage = () => {
 	const [isWin, setIsWin] = useLocalStorage('isDailyWin', false);
 	const [isLoss, setIsLoss] = useLocalStorage('isDailyLoss', false);
 	const [score, setScore] = useLocalStorage('dailyScore', 5);
+	const [proximity, setProximity] = useLocalStorage<{ top: number | null; bottom: number | null }>('proximity', {
+		top: null,
+		bottom: null,
+	});
 	const [guess, setGuess] = useState('');
 	const [dayNumber, setDayNumber] = useState(0);
 	const [animation, setAnimation] = useState<GuessAnimation | null>(null);
@@ -73,25 +78,33 @@ const GamePage = () => {
 		};
 	}, [guess, modalData]);
 
+	useEffect(() => {
+		setScore(calculateScore());
+	}, [guessCount]);
+
 	const onHighlightComplete = useCallback(
-		(animation: GuessAnimation | null) => {
-			// increment guessCount and check if gameOver
+		async (animation: GuessAnimation | null) => {
 			if (animation === 'TOP' || animation === 'BOTTOM') {
 				const method = animation === 'TOP' ? setTopGuess : setBottomGuess;
-				method(guess);
-				if (guessCount === MAX_GUESSES) return handleLoss();
-				setGuessCount(prev => prev + 1);
+				try {
+					const topProximity = animation === 'TOP' ? guess : topGuess;
+					const bottomProximity = animation === 'BOTTOM' ? guess : bottomGuess;
+					const proximity = await gameService.calculateProximity(topProximity, dailyWord, bottomProximity);
+					setProximity(proximity);
+
+					method(guess);
+					if (guessCount === MAX_GUESSES) return handleLoss();
+					setGuessCount(prev => prev + 1);
+				} catch (err) {
+					showErrorMsg('שגיאת שרת');
+				}
 			}
 			if (animation === 'CORRECT') return handleWin();
 			setAnimation(null);
 			isKeyPressAllowedRef.current = true;
 		},
-		[guess]
+		[guess, topGuess, bottomGuess]
 	);
-
-	useEffect(() => {
-		setScore(calculateScore());
-	}, [guessCount]);
 
 	const handleKeyPress = useCallback(
 		(key: string) => {
@@ -171,6 +184,7 @@ const GamePage = () => {
 				return showErrorMsg('מילה קצרה מדי');
 			}
 			const isWord = await gameService.checkIsWord(guessWord);
+
 			if (!isWord) {
 				setAnimation('INCORRECT');
 
@@ -230,10 +244,13 @@ const GamePage = () => {
 				<GuessCounter count={guessCount} maxGuesses={MAX_GUESSES} score={score} />
 			</header>
 			<div className="self-center flex flex-col flex-1 items-center sm:py-10 py-8 justify-end">
-				<div>
-					<PreviousGuess guess={topGuess} />
-					<CurrentGuess guess={guess} animation={animation} onHighlightComplete={onHighlightComplete} />
-					<PreviousGuess guess={bottomGuess} />
+				<div className="flex gap-4 text-clamp-4xl">
+					<div>
+						<PreviousGuess guess={topGuess} />
+						<CurrentGuess guess={guess} animation={animation} onHighlightComplete={onHighlightComplete} />
+						<PreviousGuess guess={bottomGuess} />
+					</div>
+					<Proximity proximity={proximity} />
 				</div>
 				<RemainingLetters guess={guess} topGuess={topGuess} bottomGuess={bottomGuess} />
 				<Keyboard onKeyPress={handleKeyPress} />

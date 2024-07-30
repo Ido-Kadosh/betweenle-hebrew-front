@@ -17,17 +17,8 @@ const getDailyData = (): Promise<{ dailyWord: string; dayNumber: number }> => {
 	return httpService.get(BASE_URL + '/daily');
 };
 
-const resetGame = () => {
-	localStorage.removeItem('topGuess');
-	localStorage.removeItem('bottomGuess');
-	localStorage.removeItem('guessCount');
-	localStorage.removeItem('isDailyWin');
-	localStorage.removeItem('dailyScore');
-	location.reload();
-};
-
-const getTimeTilMidnight = async () => {
-	return httpService.get(BASE_URL + 'time-til-midnight');
+const calculateProximity = (topWord: string, midWord: string, bottomWord: string) => {
+	return httpService.get(BASE_URL + '/proximity', { topWord, midWord, bottomWord });
 };
 
 const getDefaultStats = (): IStats => {
@@ -40,11 +31,20 @@ const getDefaultStats = (): IStats => {
 	};
 };
 
+const resetGame = () => {
+	localStorage.removeItem('topGuess');
+	localStorage.removeItem('bottomGuess');
+	localStorage.removeItem('guessCount');
+	localStorage.removeItem('isDailyWin');
+	localStorage.removeItem('dailyScore');
+	location.reload();
+};
+
 export const gameService = {
 	checkIsWord,
 	compareWords,
 	getDailyData,
 	resetGame,
-	getTimeTilMidnight,
 	getDefaultStats,
+	calculateProximity,
 };
